@@ -6,25 +6,24 @@ var tabList = document.getElementById("tabList");
 var storedTabs = [];
 var backConsole = chrome.extension.getBackgroundPage().console;
 
-//unnecessary, just to test message passing functionality
 function closeTab(tabId) {
-    chrome.runtime.sendMessage({
-            message: "funcCall",
-            function: "closeTab",
-            tabId: tabId
-        }, function(response) {
-            backConsole.log(response.message);
-        }
-    );
+    if (typeof tabId == "string") {
+        tabId = parseInt(tabId);
+    } else if (typeof tabId != "number") {
+        backConsole.error("Improper tabId passed to closeTab: " + tabId);
+        return;
+    }
+
+    chrome.tabs.remove(tabId, function() {
+        //remove html tr here?
+        
+    });
 }
 
 function populateTabs(tabs) {
     backConsole.log("Refreshing tab list");
 
     tabList.innerHTML = "";
-
-    //this words but closeTab() doesn't?
-    //chrome.tabs.remove(568, function() {});
 
     for (var i = 0; i < tabs.length; i++) {
         var title = tabs[i].title;
@@ -34,7 +33,6 @@ function populateTabs(tabs) {
 
         //button which closes the tab
         var closeB = document.createElement("button");
-        closeB.setAttribute("id", "liButton" + i);
         closeB.setAttribute("data-tab-id", tabs[i].id);
         closeB.setAttribute("class", "tabCloseButton");
         closeB.onclick = function() {
@@ -90,6 +88,34 @@ function populateStoredTabs(tabs) {
     for (var i = 0; i < tabs.length; i++) {
         var row = document.createElement("tr");
         
+        //button which closes the tab
+        var closeB = document.createElement("button");
+        closeB.setAttribute("data-tab-url", tabs[i].url);
+        closeB.setAttribute("class", "tabCloseButton");
+        closeB.onclick = function() {
+            var tabUrl = this.getAttribute("data-tab-url");
+            //get index of tab in storage
+            var pos = storedTabs.map(function(e) { return e.url; }).indexOf(tabUrl);
+            
+            if (pos > -1) {
+                storedTabs.splice(pos, 1);
+                chrome.storage.sync.set({storedTabs: storedTabs}, function() {
+                    backConsole.log("Tab unsaved");
+                });
+            } else {
+                backConsole.error("Attemped to unsave tab not found in storage");
+            }
+            
+            //TODO: remove row from callback
+            //Remove row clicked on
+            //-------------------td----------tr
+            var trNode = this.parentNode.parentNode;
+            trNode.parentNode.removeChild(trNode);
+            backConsole.log("Removed row");
+        };
+        var tdCloseButton = document.createElement("td");
+        tdCloseButton.appendChild(closeB);
+        
         var loadTabButton = document.createElement("button");
         loadTabButton.setAttribute("class", "tabLoadButton");
         loadTabButton.setAttribute("data-tab-url", tabs[i].url);
@@ -108,6 +134,7 @@ function populateStoredTabs(tabs) {
         var tdTitle = document.createElement("td");
         tdTitle.appendChild(textNode);
         
+        row.appendChild(tdCloseButton);
         row.appendChild(tdLoadButton);
         row.appendChild(tdTitle);
         
@@ -115,32 +142,27 @@ function populateStoredTabs(tabs) {
     }
 }
 
+function setStoredTabs(result) {
+    if (result.storedTabs != null) {
+        backConsole.log("Retrieved tabs from storage.");
+        populateStoredTabs(result.storedTabs);
+    } else {
+        backConsole.log("No tabs found in storage.")
+    }
+}
+
 // SET UP BUTTONS
 
 var refreshButton = document.getElementById('refreshButton');
-refreshButton.onclick = function(element) {
+refreshButton.onclick = function() {
     chrome.tabs.query({}, populateTabs);
 };
 
 var savedTabsButton = document.getElementById('savedTabsButton');
 savedTabsButton.onclick = function() {
-    chrome.storage.sync.get(['storedTabs'], function (result) {
-        if (result.storedTabs != null) {
-            backConsole.log("Retrieved tabs from storage.");
-            populateStoredTabs(result.storedTabs);
-        } else {
-            backConsole.log("No tabs found in storage.")
-        }
-    });
+    chrome.storage.sync.get(['storedTabs'], setStoredTabs);
 };
 
+// Initial calls to populate fields
 chrome.tabs.query({}, populateTabs);
-//fix this redundant crap
-chrome.storage.sync.get(["storedTabs"]), function(result) {
-    if (result.storedTabs != null) {
-        storedTabs = result.storedTabs;
-        backConsole.log("Retrieved tabs from storage.");
-    } else {
-        backConsole.log("No tabs found in storage.");
-    }
-};
+
