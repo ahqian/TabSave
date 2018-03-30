@@ -1,0 +1,45 @@
+body {
+    min-width: 400px;
+    background-color: #BBDDDD;
+}
+
+button {
+    height: 30px;
+    outline: none;
+}
+
+/*ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}*/
+
+tr {
+    list-style-type: none;
+    margin: .5em 0;
+    display: block;
+    background-color: #aacccc;
+    width: 390px;
+    
+    border: 1px solid black;
+    padding-left: .2em;
+}
+
+tr:hover {
+    background-color: #CCDEDE;
+}
+
+.tabCloseButton {
+    width: 20px;
+    background-color: #DD8888;
+}
+
+.tabSaveButton {
+    width: 20px;
+    background-color: #88DD88;
+}
+
+.tabLoadButton {
+    width: 20px;
+    background-color: #8888DD;
+}
