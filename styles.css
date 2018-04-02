@@ -1,5 +1,11 @@
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 body {
-    min-width: 400px;
+    width: 400px;
     background-color: #BBDDDD;
 }
 
@@ -19,7 +25,7 @@ tr {
     margin: .5em 0;
     display: block;
     background-color: #aacccc;
-    width: 390px;
+    /*width: 390px;*/
     
     border: 1px solid black;
     padding-left: .2em;

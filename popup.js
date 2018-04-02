@@ -4,7 +4,7 @@
 
 var tabList = document.getElementById("tabList");
 var storedTabs = [];
-var backConsole = chrome.extension.getBackgroundPage().console;
+var backConsole = console; //chrome.extension.getBackgroundPage().console;
 
 function closeTab(tabId) {
     if (typeof tabId == "string") {
