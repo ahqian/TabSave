@@ -6,33 +6,46 @@
 
 body {
     width: 400px;
-    background-color: #BBDDDD;
+    background-color: #173e43;
+}
+
+h1 {
+    font-family: 'Pacifico', cursive;
+    text-align: center;
+    color: #dddfd4;
 }
 
 button {
     height: 30px;
     outline: none;
+    font-family: 'Roboto', sans-serif;
+    background-color: #dddfd4;
 }
 
-/*ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}*/
+table {
+    clear: both;
+    width: 395px;
+    align-self: stretch;
+    color: white;
+}
 
 tr {
     list-style-type: none;
     margin: .5em 0;
     display: block;
-    background-color: #aacccc;
-    /*width: 390px;*/
+    background-color: #3fb0ac;
     
-    border: 1px solid black;
+    border: 1px solid grey;
     padding-left: .2em;
 }
 
 tr:hover {
-    background-color: #CCDEDE;
+    background-color: #fae596;
+    color: black;
+}
+
+td {
+    font-family: 'Roboto', sans-serif;
 }
 
 .tabCloseButton {
@@ -48,4 +61,10 @@ tr:hover {
 .tabLoadButton {
     width: 20px;
     background-color: #8888DD;
+}
+
+#refreshButton {
+}
+
+#savedTabsButton {
 }

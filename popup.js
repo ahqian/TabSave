@@ -20,6 +20,7 @@ function closeTab(tabId) {
     });
 }
 
+// populates the tabList with info of all the currently open tabs
 function populateTabs(tabs) {
     backConsole.log("Refreshing tab list");
 
@@ -81,8 +82,8 @@ function populateTabs(tabs) {
     }
 }
 
+// repopulates the tabList with all the stored tabs currently in storedTabs
 function populateStoredTabs(tabs) {
-    storedTabs = tabs;
     tabList.innerHTML = "";
     
     for (var i = 0; i < tabs.length; i++) {
@@ -142,10 +143,11 @@ function populateStoredTabs(tabs) {
     }
 }
 
+// callback function to set the value of storedTabs
 function setStoredTabs(result) {
     if (result.storedTabs != null) {
         backConsole.log("Retrieved tabs from storage.");
-        populateStoredTabs(result.storedTabs);
+        storedTabs = result.storedTabs;
     } else {
         backConsole.log("No tabs found in storage.")
     }
@@ -160,9 +162,13 @@ refreshButton.onclick = function() {
 
 var savedTabsButton = document.getElementById('savedTabsButton');
 savedTabsButton.onclick = function() {
-    chrome.storage.sync.get(['storedTabs'], setStoredTabs);
+    chrome.storage.sync.get(['storedTabs'], function(result) {
+        setStoredTabs(result);
+        populateStoredTabs(result.storedTabs);
+    });
 };
 
-// Initial calls to populate fields
+// Initial calls to populate data
 chrome.tabs.query({}, populateTabs);
+chrome.storage.sync.get(['storedTabs'], setStoredTabs);
 
